@@ -1,9 +1,13 @@
 import { gql } from "@apollo/client";
 import client from "client";
+import { BlockRenderer } from "components/BlockRenderer/BlockRenderer";
+import { cleanAndTransformBlocks } from "utils/cleanAndTransformBlocks";
 
 export default function Home(props) {
   console.log(props)
-  return <div>Next JS &amp; WordPress course.</div>;
+  return  <div>
+    <BlockRenderer blocks={props.blocks} />
+  </div>;
 
 }
 
@@ -11,18 +15,20 @@ export const getStaticProps = async ()=>{
   const {data} = await client.query({
     query: gql`
     query NewQuery {
-      pages {
-        nodes {
+      nodeByUri(uri: "/") {
+        ... on Page {
+          id
           title
+          blocksJSON
         }
       }
     }
     `
   })
+  const blocks = cleanAndTransformBlocks(data.nodeByUri.blocksJSON)
   return{
-    props:{
-      data,
-      myexampleprops: "1props"
+    props:{      
+      blocks,
     }
   }
 }
