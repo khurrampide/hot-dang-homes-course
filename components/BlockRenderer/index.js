@@ -1,1 +1,1 @@
-import * from './BlockRenderer'
+export * from './BlockRenderer'
